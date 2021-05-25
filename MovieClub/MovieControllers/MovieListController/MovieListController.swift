@@ -65,6 +65,7 @@ class MovieListController: UIViewController {
     func updateUIForSimilarMovies() {
         aSimilarMovieView = true
         similarMoviesLabel.isHidden = false
+        self.searchTextField.isHidden = true
         self.containerView.backgroundColor = .clear
         self.searchTextFieldHeight.constant = 0
         self.searchTextField.layer.borderColor = UIColor.white.cgColor;

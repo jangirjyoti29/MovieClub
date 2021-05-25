@@ -375,7 +375,7 @@ extension MovieDataManager {
     func getSearchResult(word searchedWord:String) -> [MovieData]? {
         var moviesContainsWord:[MovieData]?
         
-        let totalWords = searchedWord.components(separatedBy: " ")
+        let totalWords = searchedWord.components(separatedBy: " ").map({$0.replacingOccurrences(of: " ", with: "")}).filter({!$0.isEmpty})
         if totalWords.count > 1 {
             moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
                 if !movieData.title!.localizedCaseInsensitiveContains(totalWords.first!) {
@@ -394,20 +394,22 @@ extension MovieDataManager {
                 }
             }
         }else {
-            moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
-                let allWords = movieData.title!.components(separatedBy: " ").filter({$0.localizedCaseInsensitiveContains(searchedWord)})
-                if let _ =  allWords.first(where: { (text) -> Bool in
-                    if let subString = text.range(of: searchedWord, options: .caseInsensitive)?.upperBound {
-                        let resultString = text[..<subString]
-                        if searchedWord.lowercased() == resultString.lowercased() {
-                            return true
+            if let searchedWord = totalWords.first {
+                moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
+                    let allWords = movieData.title!.components(separatedBy: " ").filter({$0.localizedCaseInsensitiveContains(searchedWord)})
+                    if let _ =  allWords.first(where: { (text) -> Bool in
+                        if let subString = text.range(of: searchedWord, options: .caseInsensitive)?.upperBound {
+                            let resultString = text[..<subString]
+                            if searchedWord.lowercased() == resultString.lowercased() {
+                                return true
+                            }
                         }
+                        return false
+                    }) {
+                        return true
                     }
                     return false
-                }) {
-                    return true
                 }
-                return false
             }
         }
         if let moviesContainsWord = moviesContainsWord {
@@ -419,7 +421,7 @@ extension MovieDataManager {
     func setMoviesLastSearched(_ movies:[MovieData], setTrue lastSeached:Bool) {
         let updateOperation = BlockOperation(block: { [weak self] in
             movies.forEach({ movie in
-                if let movieInfo = self?.getMovieInfo(movie.movieId!) {
+                if let movieInfo = self?.movieInfoList.first(where: {$0.movieId == movie.movieId!}) {
                     if lastSeached {
                         let dateFormatter = DateFormatter()
                         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
