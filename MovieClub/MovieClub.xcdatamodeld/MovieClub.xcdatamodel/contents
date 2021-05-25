@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20E241" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20E241" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CastInfo" representedClassName="CastInfo" syncable="YES" codeGenerationType="class">
         <attribute name="author" optional="YES" attributeType="String"/>
         <attribute name="castId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -23,6 +23,7 @@
         <attribute name="budget" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="genreIds" optional="YES" attributeType="Transformable"/>
         <attribute name="genres" optional="YES" attributeType="Transformable"/>
+        <attribute name="isLastSearched" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="movieId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="originalLanguage" optional="YES" attributeType="String"/>
         <attribute name="originalTitle" optional="YES" attributeType="String"/>
@@ -31,6 +32,7 @@
         <attribute name="posterPath" optional="YES" attributeType="String"/>
         <attribute name="releaseDate" optional="YES" attributeType="String"/>
         <attribute name="runtime" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="searchedTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="spokenLanguage" optional="YES" attributeType="Transformable"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="tagline" optional="YES" attributeType="String"/>
@@ -43,6 +45,6 @@
     </entity>
     <elements>
         <element name="CastInfo" positionX="-63" positionY="144" width="128" height="239"/>
-        <element name="MovieInfo" positionX="-63" positionY="-18" width="128" height="374"/>
+        <element name="MovieInfo" positionX="-63" positionY="-18" width="128" height="404"/>
     </elements>
 </model>

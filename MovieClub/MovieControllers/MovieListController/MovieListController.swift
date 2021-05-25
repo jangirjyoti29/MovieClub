@@ -9,6 +9,8 @@ import UIKit
 
 class MovieListController: UIViewController {
 
+    @IBOutlet weak var tableViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var similarMoviesTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var searchButtonWidth: NSLayoutConstraint!
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var similarMoviesLabel: UILabel!
@@ -50,12 +52,14 @@ class MovieListController: UIViewController {
     }
     
     func reloadMovies() {
-        if searchMovieView, movieDataSource!.count == 0 {
+        if searchMovieView, (movieDataSource == nil || movieDataSource!.count == 0) {
             self.movieListTableView.isHidden = true
         }else {
             self.movieListTableView.isHidden = false
         }
-        movieListTableView.reloadData()
+        UIView.setAnimationsEnabled(false)
+        self.movieListTableView.reloadData()
+        UIView.setAnimationsEnabled(true)
     }
     
     func updateUIForSimilarMovies() {
@@ -73,7 +77,20 @@ class MovieListController: UIViewController {
         self.movieListTableView.isHidden = true
         searchButtonWidth.constant = UIDevice.isIpad() ? 70 :60
         searchButton.isHidden = false
-        searchTextField.becomeFirstResponder()
+        reloadMovies()
+        if movieDataSource != nil, movieDataSource!.count > 0 {
+            similarMoviesLabel.isHidden = false
+            similarMoviesLabel.text = "Last Searched Movies "
+            similarMoviesTopConstraint.constant = 110
+            tableViewTopConstraint.constant = 100
+        }else {
+            searchTextField.becomeFirstResponder()
+            similarMoviesLabel.isHidden = true
+            similarMoviesLabel.text = ""
+            similarMoviesTopConstraint.constant = 5
+            tableViewTopConstraint.constant = 20
+            self.movieListTableView.isHidden = true
+        }
     }
     
     @IBAction func searchButtonAction(_ sender: Any) {
@@ -111,11 +128,10 @@ extension MovieListController {
 extension MovieListController : UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let subViews = tableView.tableFooterView?.subviews, let loader = subViews.first(where: {type(of: $0) == UIActivityIndicatorView.self}){
-            loader.removeFromSuperview()
-        }
-        
         if let movieDataSource = self.movieDataSource, indexPath.row == movieDataSource.count-1, let willDisplayLastItem = willDisplayLastItem {
+            if let subViews = tableView.tableFooterView?.subviews, let loader = subViews.first(where: {type(of: $0) == UIActivityIndicatorView.self}){
+                loader.removeFromSuperview()
+            }
             tableView.tableFooterView = nil
             let view = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 100))
             tableView.tableFooterView = view
@@ -172,6 +188,11 @@ extension MovieListController : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
         if let didTapOnSearchButton = didTapOnSearchButton, let text = textField.text {
+            similarMoviesLabel.isHidden = true
+            similarMoviesLabel.text = ""
+            similarMoviesTopConstraint.constant = 5
+            tableViewTopConstraint.constant = 20
+            self.movieListTableView.isHidden = true
             didTapOnSearchButton(text)
         }
         return true

@@ -2,7 +2,7 @@
 //  MovieInfo+CoreDataProperties.swift
 //  MovieClub
 //
-//  Created by Jyoti Suthar on 24/05/21.
+//  Created by Jyoti Suthar on 25/05/21.
 //
 //
 
@@ -17,6 +17,7 @@ extension MovieInfo {
     }
 
     @NSManaged public var adult: Bool
+    @NSManaged public var aSimilarMovie: Bool
     @NSManaged public var backdropPath: String?
     @NSManaged public var budget: Int64
     @NSManaged public var genreIds: NSObject?
@@ -37,7 +38,8 @@ extension MovieInfo {
     @NSManaged public var video: Bool
     @NSManaged public var voteAverage: Float
     @NSManaged public var voteCount: Int64
-    @NSManaged public var aSimilarMovie: Bool
+    @NSManaged public var isLastSearched: Bool
+    @NSManaged public var searchedTime: Date?
     @NSManaged public var movieCasts: NSSet?
 
 }

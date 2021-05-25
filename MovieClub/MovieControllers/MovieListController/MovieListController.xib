@@ -17,6 +17,8 @@
                 <outlet property="searchTextField" destination="SkS-4R-Miq" id="NzE-YE-4f2"/>
                 <outlet property="searchTextFieldHeight" destination="iOJ-e9-V0M" id="X5N-Ou-uB7"/>
                 <outlet property="similarMoviesLabel" destination="M9h-8C-6vc" id="lGV-rU-7ex"/>
+                <outlet property="similarMoviesTopConstraint" destination="1iy-lB-s8X" id="yg7-HQ-eWD"/>
+                <outlet property="tableViewTopConstraint" destination="x4G-2y-27N" id="MNU-Xu-nyS"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>

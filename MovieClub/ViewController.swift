@@ -110,7 +110,7 @@ extension ViewController {
     
     func addSearchController() {
         searchListController = nil
-        searchListController = MovieListController.init(nil)
+        searchListController = MovieListController.init(self.movieDataManager.getLastSearchedMovies())
         searchListController?.view.frame = self.view.bounds
         searchListController?.updateUIForSearch()
         self.addChild(searchListController!)

@@ -30,7 +30,8 @@ class MovieData: NSObject {
     var runtime:Int?
     var castList:[MovieCast]?
     var aSimilarMovie = false
-    
+    var isLastSearched: Bool = false
+    var searchedTime: Date?
     
     class Genres:NSObject {
         let id: Int?
@@ -81,6 +82,8 @@ class MovieData: NSObject {
         self.status = movieInfo.status
         self.runtime = Int(movieInfo.runtime)
         self.aSimilarMovie = movieInfo.aSimilarMovie
+        self.isLastSearched = movieInfo.isLastSearched
+        self.searchedTime = movieInfo.searchedTime
         
         if let genres = movieInfo.genres as? NSArray {
             genres.forEach({ genre in

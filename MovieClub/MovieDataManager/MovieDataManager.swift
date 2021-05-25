@@ -88,7 +88,7 @@ extension MovieDataManager {
     
     
     func fetchMoviesListForNextSlot(_ totalBooks:Int) {
-        if (totalBooks % slotSize != 0 || totalBooks/pageId == slotSize) && pageId < self.moviesDataSource[0].totalPageIds! {
+        if (totalBooks % slotSize == 0 || totalBooks/pageId == slotSize) && pageId < self.moviesDataSource[0].totalPageIds! {
             pageId += 1
             self.fetchMoviesListFromServer()
         }
@@ -372,10 +372,12 @@ extension MovieDataManager {
 }
 
 extension MovieDataManager {
-    func getSearchResult(word searchedWord:String) -> [MovieData] {
+    func getSearchResult(word searchedWord:String) -> [MovieData]? {
+        var moviesContainsWord:[MovieData]?
+        
         let totalWords = searchedWord.components(separatedBy: " ")
         if totalWords.count > 1 {
-            let moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
+            moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
                 if !movieData.title!.localizedCaseInsensitiveContains(totalWords.first!) {
                     return false
                 }
@@ -391,9 +393,8 @@ extension MovieDataManager {
                     return false
                 }
             }
-            return moviesContainsWord
         }else {
-            let moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
+            moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
                 let allWords = movieData.title!.components(separatedBy: " ").filter({$0.localizedCaseInsensitiveContains(searchedWord)})
                 if let _ =  allWords.first(where: { (text) -> Bool in
                     if let subString = text.range(of: searchedWord, options: .caseInsensitive)?.upperBound {
@@ -408,7 +409,49 @@ extension MovieDataManager {
                 }
                 return false
             }
-            return moviesContainsWord
         }
+        if let moviesContainsWord = moviesContainsWord {
+            self.setMoviesLastSearched(moviesContainsWord, setTrue: true)
+        }
+        return moviesContainsWord
+    }
+    
+    func setMoviesLastSearched(_ movies:[MovieData], setTrue lastSeached:Bool) {
+        let updateOperation = BlockOperation(block: { [weak self] in
+            movies.forEach({ movie in
+                if let movieInfo = self?.getMovieInfo(movie.movieId!) {
+                    if lastSeached {
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+                        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+                        let dateString = dateFormatter.string(from: Date.init())
+                        movieInfo.isLastSearched = true
+                        movieInfo.searchedTime = dateFormatter.date(from: dateString)
+                    }else {
+                        movieInfo.isLastSearched = false
+                    }
+                }
+            })
+            do{
+                try MovieCoreDataManager.sharedInstance().managedObjectContext.save()
+            } catch let error{
+                print(error)
+            }
+            self?.refreshMovie()
+        })
+        updateOperation.queuePriority = .veryHigh
+        self.databaseOperationQueue.addOperation(updateOperation)
+    }
+    
+    func getLastSearchedMovies() -> [MovieData]?{
+        var searchedMovies = self.moviesDataSource.filter({$0.isLastSearched == true})
+        searchedMovies.sort(by:{($0.searchedTime ?? .distantPast)!.compare(($1.searchedTime ?? .distantPast)) == .orderedDescending})
+        if searchedMovies.count > 5 {
+            self.setMoviesLastSearched(Array(searchedMovies.suffix(from: 5)) as [MovieData], setTrue: false)
+        }
+        if searchedMovies.count > 0 {
+            return Array(searchedMovies.prefix(5)) as [MovieData]
+        }
+        return nil
     }
 }
