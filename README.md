@@ -23,6 +23,8 @@ In this New Screen the below information will be shown :
      2. Bohemian Rhapsody
      
    **Case 2** - If the user searches for - Le Jaayenge Dilwale, the list should display the movie - Dilwale Dulhania Le Jaayenge
+   
+   **case 3** - A Cache is also mantained for last searched results. Maximum 5 last searched results will only be display on screen when user taps on search feature.
 
 
 Along with this the offline storage/database is also maintained for the application.
