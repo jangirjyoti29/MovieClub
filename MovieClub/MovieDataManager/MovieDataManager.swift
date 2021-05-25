@@ -372,22 +372,43 @@ extension MovieDataManager {
 }
 
 extension MovieDataManager {
-    func getSearchResult(word searchedWord:String) -> [MovieData]{
-        let moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
-            let allWords = movieData.title!.components(separatedBy: " ").filter({$0.localizedCaseInsensitiveContains(searchedWord)})
-            if let _ =  allWords.first(where: { (text) -> Bool in
-                if let subString = text.range(of: searchedWord, options: .caseInsensitive)?.upperBound {
-                    let resultString = text[..<subString]
-                    if searchedWord.lowercased() == resultString.lowercased() {
+    func getSearchResult(word searchedWord:String) -> [MovieData] {
+        let totalWords = searchedWord.components(separatedBy: " ")
+        if totalWords.count > 1 {
+            let moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
+                if !movieData.title!.localizedCaseInsensitiveContains(totalWords.first!) {
+                    return false
+                }
+                let existingWords = totalWords.filter { (eachWord) -> Bool in
+                    if movieData.title!.components(separatedBy: " ").first(where: {$0.lowercased() == eachWord.lowercased()}) != nil {
                         return true
                     }
+                    return false
+                }
+                if existingWords.count == totalWords.count {
+                    return true
+                }else {
+                    return false
+                }
+            }
+            return moviesContainsWord
+        }else {
+            let moviesContainsWord = self.moviesDataSource.filter { (movieData) -> Bool in
+                let allWords = movieData.title!.components(separatedBy: " ").filter({$0.localizedCaseInsensitiveContains(searchedWord)})
+                if let _ =  allWords.first(where: { (text) -> Bool in
+                    if let subString = text.range(of: searchedWord, options: .caseInsensitive)?.upperBound {
+                        let resultString = text[..<subString]
+                        if searchedWord.lowercased() == resultString.lowercased() {
+                            return true
+                        }
+                    }
+                    return false
+                }) {
+                    return true
                 }
                 return false
-            }) {
-                return true
             }
-            return false
+            return moviesContainsWord
         }
-        return moviesContainsWord
     }
 }
